@@ -1,14 +1,17 @@
 package com.MyFirstApplication.dto;
 
-public class ForgetPasswordDTO {
+public class ForgetPasswordDTO 
+{
+	//VARIABLES
 	long mobileNo;
 	String nickName;
-	
+	//CONSTRUCTOR
 	public ForgetPasswordDTO(int mobileNo, String nickName) {
 		super();
 		this.mobileNo = mobileNo;
 		this.nickName = nickName;
 	}
+	//GETTERS AND SETTERS
 	public long getMobileNo() {
 		return mobileNo;
 	}
