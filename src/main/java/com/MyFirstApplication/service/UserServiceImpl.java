@@ -1,20 +1,32 @@
 package com.MyFirstApplication.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.MyFirstApplication.dto.ForgetPasswordDTO;
 import com.MyFirstApplication.dto.UserLoginDTO;
 import com.MyFirstApplication.dto.UserRegisterDTO;
 import com.MyFirstApplication.model.Response;
+import com.MyFirstApplication.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+	@Autowired
+	UserRepository userRepository;														
+	@Autowired
+	ResponseImpl responseImpl;
 	@Override
-	public Response UserLogin(UserLoginDTO userLoginDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response UserLogin(UserLoginDTO userLoginDto) 
+	{
+		if (userRepository.findByUserName(userLoginDto.getUserName())
+				.equals(userRepository.findByPassword(userLoginDto.getPassword())))
+		{
+			return new Response("Login successfull",200);
+		}
+		return new Response("already exists",400);
 	}
+
 
 	@Override
 	public Response UserRegister(UserRegisterDTO userRegisterDto) throws Exception, NullPointerException {
@@ -33,5 +45,5 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
