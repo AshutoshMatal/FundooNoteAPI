@@ -1,5 +1,7 @@
 package com.MyFirstApplication.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +29,6 @@ public class UserServiceImpl implements UserService {
 		}
 		return new Response("already exists",400);
 	}
-
-
 	@Override
 	public Response UserRegister(UserRegisterDTO userRegisterDto)throws Exception,NullPointerException 
 	{
@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response forgetPassword(ForgetPasswordDTO forgetPasswordDto)
 	{
-
 		if (userRepository.findByNickName(forgetPasswordDto.getNickName())
 				.equals(userRepository.findByMobileNo(forgetPasswordDto.getMobileNo())))
 		{
@@ -51,12 +50,18 @@ public class UserServiceImpl implements UserService {
 		return new Response("false", 201);
 	}
 
-
-
 	@Override
-	public Response resetPassword(int id, String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response resetPassword(int id, String password) 
+	{
+		Optional<User> optionalUser=userRepository.findById(id);
+		if(optionalUser.isPresent())
+		{
+			User user=optionalUser.get();
+			user.setPassword(password);
+			userRepository.save(user);
+			return new Response("Successfully done",200);
+		}
+		return new Response("Failed",400);
 	}
 
 }
