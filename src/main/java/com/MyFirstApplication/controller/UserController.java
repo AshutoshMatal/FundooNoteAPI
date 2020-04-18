@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.MyFirstApplication.dto.ForgetPasswordDTO;
 import com.MyFirstApplication.dto.UserLoginDTO;
+import com.MyFirstApplication.dto.UserRegisterDTO;
 import com.MyFirstApplication.model.Response;
 import com.MyFirstApplication.service.UserService;
 
@@ -20,6 +22,16 @@ public class UserController {
 	public  ResponseEntity<Response> login(@RequestBody UserLoginDTO userLoginDto)
 	{
 		Response response=userService.UserLogin(userLoginDto);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+	@PostMapping("/register")
+	public ResponseEntity<Response> register(@RequestBody UserRegisterDTO userRegisterDto)throws Exception {
+		Response response=userService.UserRegister(userRegisterDto);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+	@PostMapping("/forget")
+	public ResponseEntity<Response> forget(@RequestBody ForgetPasswordDTO forgetPasswordDto){
+		Response response=userService.forgetPassword(forgetPasswordDto);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 }
