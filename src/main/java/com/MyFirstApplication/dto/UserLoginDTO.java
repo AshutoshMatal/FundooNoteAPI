@@ -1,14 +1,18 @@
 package com.MyFirstApplication.dto;
 
-public class UserLoginDTO {
+public class UserLoginDTO 
+{
+	//VARIABLES
 	String UserName;
 	String Password;
+	//CONSTRUCTOR
 	public UserLoginDTO(String userName, String password)
 	{
 		super();
 		UserName = userName;
 		Password = password;
 	}
+	//GETTERS AND SETTERS
 	public String getUserName() 
 	{
 		return UserName;
