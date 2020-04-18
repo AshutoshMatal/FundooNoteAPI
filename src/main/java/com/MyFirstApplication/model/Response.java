@@ -1,9 +1,11 @@
 package com.MyFirstApplication.model;
 
-public class Response {
+public class Response 
+{ 
+	//VARIABLES
 	private String ResponseStatus;
 	private int ResponseCode;
-
+	//CONSTRUCTOR
 	public Response() {
 		super();
 	}
@@ -12,6 +14,7 @@ public class Response {
 		ResponseStatus = responseStatus;
 		ResponseCode = responseCode;
 	}
+	//GETTERS AND SETTERS
 	public String getResponseStatus() {
 		return ResponseStatus;
 	}
