@@ -1,12 +1,14 @@
 package com.MyFirstApplication.model;
-public class User {
+public class User 
+{	
+	//VARIABLES
 	private int id;
 	private String username;
 	private String name;
 	private String password;
 	private String emailId;
 	private String country;
-
+	//CONSTRUCTOR
 	public User() {
 	}
 	public User(int id, String username, String name, String password, String emailId, String country) {
@@ -18,6 +20,7 @@ public class User {
 		this.emailId = emailId;
 		this.country = country;
 	}
+	//GETTERS AND SETTERS
 	public int getId() 
 	{
 		return id;
