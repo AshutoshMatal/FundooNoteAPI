@@ -1,9 +1,13 @@
+package com.MyFirstApplication.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MyFirstApplication.dto.ForgetPasswordDTO;
@@ -34,4 +38,10 @@ public class UserController {
 		Response response=userService.forgetPassword(forgetPasswordDto);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
+	@PutMapping("/reset/{id}")
+	public ResponseEntity<Response> reset(@PathVariable int id,@RequestParam String password){
+		Response response=userService.resetPassword(id,password);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+
 }
