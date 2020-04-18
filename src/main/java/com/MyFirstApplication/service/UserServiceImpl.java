@@ -39,10 +39,19 @@ public class UserServiceImpl implements UserService {
 
 	}
 	@Override
-	public Response forgetPassword(ForgetPasswordDTO forgetPasswordDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response forgetPassword(ForgetPasswordDTO forgetPasswordDto)
+	{
+
+		if (userRepository.findByNickName(forgetPasswordDto.getNickName())
+				.equals(userRepository.findByMobileNo(forgetPasswordDto.getMobileNo())))
+		{
+
+			return new Response("true", 200);
+		}
+		return new Response("false", 201);
 	}
+
+
 
 	@Override
 	public Response resetPassword(int id, String username) {
