@@ -7,6 +7,7 @@ import com.MyFirstApplication.dto.ForgetPasswordDTO;
 import com.MyFirstApplication.dto.UserLoginDTO;
 import com.MyFirstApplication.dto.UserRegisterDTO;
 import com.MyFirstApplication.model.Response;
+import com.MyFirstApplication.model.User;
 import com.MyFirstApplication.repository.UserRepository;
 
 @Service
@@ -29,11 +30,14 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public Response UserRegister(UserRegisterDTO userRegisterDto) throws Exception, NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Response UserRegister(UserRegisterDTO userRegisterDto)throws Exception,NullPointerException 
+	{
+		User userRegistration=modelMapper.map( userRegisterDto,User.class);
+		userRepository.save(userRegistration);
 
+		return new Response("Registration successfull",200);
+
+	}
 	@Override
 	public Response forgetPassword(ForgetPasswordDTO forgetPasswordDto) {
 		// TODO Auto-generated method stub
