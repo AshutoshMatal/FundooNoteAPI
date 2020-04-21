@@ -1,5 +1,4 @@
 package com.MyFirstApplication.service;
-
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -14,47 +13,52 @@ import com.MyFirstApplication.model.User;
 import com.MyFirstApplication.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
+	User user=new User();
 	ModelMapper modelMapper=new ModelMapper();
 	@Autowired
 	UserRepository userRepository;
-	@Autowired
-	ResponseImpl responseImpl;
 	@Override
-	public Response UserLogin(UserLoginDTO userLoginDto) 
+	public Response login(UserLoginDTO userLoginDto) 
 	{
-	
-	if (userRepository.findByUserName(userLoginDto.getUserName())
-				.equals(userRepository.findByPassword(userLoginDto.getPassword())))
-	{
+		Optional<User> optionalUser=userRepository.findByUsername(userLoginDto.getUsername());
+
 		return new Response("Login successfull",200);
+
 	}
-	return new Response("already exists",400);
-}
 	@Override
-	public Response UserRegister(UserRegisterDTO userRegisterDto)throws Exception,NullPointerException 
+	public Response register(UserRegisterDTO userRegisterDto)throws Exception
 	{
-			User userRegistration=modelMapper.map( userRegisterDto,User.class);
-			userRepository.save(userRegistration);
+		modelMapper.map( userRegisterDto,user);
+		userRepository.save(user);
+		if (userRepository.findByUsername(user.getUsername())
+				.equals(userRepository.findByPassword(user.getPassword())))
+		{
 
 			return new Response("Registration successfull",200);
 
+		}
+		return new Response("Error",400);
 	}
 	@Override
-	public Response forgetPassword(ForgetPasswordDTO forgetPasswordDto)
+	public Response forget(ForgetPasswordDTO forgetPasswordDto)
 	{
 
-		if (userRepository.findByNickName(forgetPasswordDto.getNickName())
-				.equals(userRepository.findByMobileNo(forgetPasswordDto.getMobileNo())))
+		modelMapper.map(forgetPasswordDto, user);
+
+		// Checking secret information is valid or not
+		if (userRepository.findByEmailId(user.getEmailId())
+				.equals(userRepository.findByMobileNo(user.getMobileNo())))
 		{
-				
+
+
 			return new Response("true", 200);
 		}
 		return new Response("false", 201);
 	}
-	
+
 
 	@Override
-	public Response resetPassword(int id, String password) 
+	public Response reset(long id, String password) 
 	{
 		Optional<User> optionalUser=userRepository.findById(id);
 		if(optionalUser.isPresent())
@@ -66,5 +70,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return new Response("Failed",400);
 	}
+
+
 
 }
