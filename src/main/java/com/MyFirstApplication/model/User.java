@@ -30,7 +30,9 @@ public class User
 	private String country;
 	@Pattern(regexp = "([0-9]{10})")
 	private long mobileNo;
-	
+	private String resetToken;
+
+
 	public User() {
 	}
 	public User(String username, String name, String password, String emailId, String country, long mobileNo) {
@@ -42,7 +44,7 @@ public class User
 		this.country = country;
 		this.mobileNo = mobileNo;
 	}
-	
+
 	//GETTERS AND SETTERS
 
 	public String getUsername() 
@@ -91,6 +93,14 @@ public class User
 
 	public void setMobileNo(long mobileNo) {
 		this.mobileNo = mobileNo;
+	}
+	public String getResetToken() {
+		return resetToken;
+	}
+	
+	public void setResetToken(String string) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
