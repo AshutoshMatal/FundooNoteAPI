@@ -21,7 +21,7 @@ public class User
 	private String username;
 	@NotEmpty(message = "Please provide your name")
 	private String name;
-	@Transient
+	
 	private String password;
 	@Email(message = "Please provide a valid e-mail")
 	@NotEmpty(message = "Please provide an e-mail")
@@ -30,8 +30,7 @@ public class User
 	private String country;
 	@Pattern(regexp = "([0-9]{10})")
 	private long mobileNo;
-	private String resetToken;
-
+	private boolean isEnabled;
 
 	public User() {
 	}
@@ -43,10 +42,9 @@ public class User
 		this.emailId = emailId;
 		this.country = country;
 		this.mobileNo = mobileNo;
+
 	}
-
 	//GETTERS AND SETTERS
-
 	public String getUsername() 
 	{
 		return username;
@@ -94,13 +92,12 @@ public class User
 	public void setMobileNo(long mobileNo) {
 		this.mobileNo = mobileNo;
 	}
-	public String getResetToken() {
-		return resetToken;
-	}
-	
-	public void setResetToken(String string) {
-		// TODO Auto-generated method stub
-		
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	
 }
