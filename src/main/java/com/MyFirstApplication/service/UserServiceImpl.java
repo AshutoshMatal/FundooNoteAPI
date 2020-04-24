@@ -1,29 +1,28 @@
 package com.MyFirstApplication.service;
 import java.util.Optional;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.MyFirstApplication.dto.ForgetPasswordDTO;
 import com.MyFirstApplication.dto.UserLoginDTO;
 import com.MyFirstApplication.dto.UserRegisterDTO;
+import com.MyFirstApplication.model.ConfirmationToken;
 import com.MyFirstApplication.model.Response;
 import com.MyFirstApplication.model.User;
+import com.MyFirstApplication.repository.ConfirmationTokenRepository;
 import com.MyFirstApplication.repository.UserRepository;
+
 @Service
 public class UserServiceImpl implements UserService {
 
 	User user=new User();
 	ModelMapper modelMapper=new ModelMapper();
 
-	
+
+	@Autowired
+	private ConfirmationTokenRepository confirmationTokenRepository;
 
 	@Autowired
 	private EmailService emailService;
@@ -34,18 +33,45 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response login(UserLoginDTO userLoginDto) 
 	{
+		modelMapper.map(userLoginDto,user);
 		Optional<User> user=userRepository.findByUsername(userLoginDto.getUsername());
-
-		return new Response("Login successfull",200);
-
+		if(user.get().getUsername().equals(userLoginDto.getUsername())&&user.get().getPassword().equals(userLoginDto))
+		{
+			return new Response("Login successfully",200);
+		}
+		return new Response("Login failed",400);
 	}
 	@Transactional
 	@Override
 	public Response register(UserRegisterDTO userRegisterDto)throws Exception,NullPointerException
 	{
-		modelMapper.map(userRegisterDto,user);
-		userRepository.save(user);
-		return new Response("Registration successfully",200);
+		User existingUser = userRepository.findByEmailIdIgnoreCase(user.getEmailId());
+		if(existingUser != null)
+		{
+			return new Response("Error",400);
+		}
+		else
+		{
+			User userreg=modelMapper.map(userRegisterDto,User.class);
+			userRepository.save(userreg);	
+			ConfirmationToken confirmationToken = new ConfirmationToken(userreg);
+
+			confirmationTokenRepository.save(confirmationToken);
+			SimpleMailMessage mailMessage = new SimpleMailMessage();
+			mailMessage.setTo(user.getEmailId());
+			mailMessage.setSubject("Complete Registration!");
+			mailMessage.setFrom("ashutoshmatal33@gmail.com");
+			mailMessage.setText("To confirm your account, please click here : "
+					+"http://localhost:8080/confirm?token="+confirmationToken.getConfirmationToken());
+
+			emailService.sendEmail(mailMessage);
+
+			//HttpHeaders response = new HttpHeaders();
+			//response.add("emailId", user.getEmailId());
+			
+			return new Response("Registration successfully",200);
+		}
+
 	}
 	@Transactional
 	@Override
@@ -53,31 +79,14 @@ public class UserServiceImpl implements UserService {
 	{
 
 		modelMapper.map(emailId,user);
-		Optional<User> optional = userRepository.findByEmailId(emailId);
-		if (!optional.isPresent())
+		Optional<User> user = userRepository.findByEmailId(emailId);
+		if(user==null)
 		{
-			return new Response("false", 201);
-		} 
-		else 
-		{
-			User user=optional.get();
-			user.setResetToken(UUID.randomUUID().toString());
-			userRepository.save(user);
-			
-			// Email message
-			SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
-			passwordResetEmail.setFrom("support@demo.com");
-			passwordResetEmail.setTo(user.getEmailId());
-			passwordResetEmail.setSubject("Password Reset Request");
-			passwordResetEmail.setText("To reset your password, click the link below /reset?token=" + user.getResetToken());
-
-			emailService.sendEmail(passwordResetEmail);
-
-
-			return new Response("true", 200);
+			return new Response("false", 400);
 		}
-
+		return new Response("true", 200);
 	}
+
 	@Transactional
 	@Override
 	public Response reset(long id, String password) 
@@ -92,7 +101,26 @@ public class UserServiceImpl implements UserService {
 		}
 		return new Response("Failed",400);
 	}
+	
+	
+	@Override
+	public String confirmToken(String confirmationToken) {
+		ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+		if(token != null)
+		{
+			User user = userRepository.findByEmailIdIgnoreCase(token.getUser().getEmailId());
 
+			user.setEnabled(true);
+			userRepository.save(user);
+		}
+		else
+		{
+			return "Error";
+
+		}
+
+		return "Successfully";
+	}
 
 
 }
