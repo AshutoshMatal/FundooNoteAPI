@@ -3,7 +3,6 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import com.MyFirstApplication.dto.UserLoginDTO;
@@ -35,26 +34,24 @@ public class UserServiceImpl implements UserService {
 	{
 		modelMapper.map(userLoginDto,user);
 		Optional<User> user=userRepository.findByUsername(userLoginDto.getUsername());
-		if(user.get().getUsername().equals(userLoginDto.getUsername())&&user.get().getPassword().equals(userLoginDto))
-		{
-			return new Response("Login successfully",200);
-		}
-		return new Response("Login failed",400);
+		//if(user.get().getUsername().equals(userLoginDto.getUsername())&&user.get().getPassword().equals(user))
+		//{
+		return new Response("Login successfully",200);
+		//}
+		//return new Response("Login failed",400);
 	}
 	@Transactional
 	@Override
 	public Response register(UserRegisterDTO userRegisterDto)throws Exception,NullPointerException
 	{
-		User existingUser = userRepository.findByEmailIdIgnoreCase(user.getEmailId());
-		if(existingUser != null)
+		Optional<User> optional = userRepository.findByEmailId(user.getEmailId());
+		modelMapper.map( userRegisterDto,user);
+
+		if (userRepository.findByUsername(user.getUsername())
+				.equals(userRepository.findByPassword(user.getPassword())))
 		{
-			return new Response("Error",400);
-		}
-		else
-		{
-			User userreg=modelMapper.map(userRegisterDto,User.class);
-			userRepository.save(userreg);	
-			ConfirmationToken confirmationToken = new ConfirmationToken(userreg);
+			userRepository.save(user);
+			ConfirmationToken confirmationToken = new ConfirmationToken(user);
 
 			confirmationTokenRepository.save(confirmationToken);
 			SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -68,11 +65,14 @@ public class UserServiceImpl implements UserService {
 
 			//HttpHeaders response = new HttpHeaders();
 			//response.add("emailId", user.getEmailId());
-			
+
 			return new Response("Registration successfully",200);
+
 		}
+		return new Response("Registration faied",400);
 
 	}
+
 	@Transactional
 	@Override
 	public Response forget(String emailId)
@@ -101,26 +101,21 @@ public class UserServiceImpl implements UserService {
 		}
 		return new Response("Failed",400);
 	}
-	
-	
+
 	@Override
-	public String confirmToken(String confirmationToken) {
+	public Response confirmToken(String confirmationToken) 
+	{
 		ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
-		if(token != null)
-		{
-			User user = userRepository.findByEmailIdIgnoreCase(token.getUser().getEmailId());
+		Optional<User> optional = userRepository.findByEmailId(token.getUser().getEmailId());
 
-			user.setEnabled(true);
+		if (token!=null) 
+		{
+			User user=optional.get();
 			userRepository.save(user);
-		}
-		else
-		{
-			return "Error";
+
+			return new Response("Successfully done",200);
 
 		}
-
-		return "Successfully";
+		return new Response("Error",400);
 	}
-
-
 }
