@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmailId(String emailId);
 
 	Optional<User> findByMobileNo(long  mobileNo);
-
-	Optional<User> findByResetToken(String resetToken);
+	
+	//Optional<User> findByEmailIdIgnoreCase(String emailId);
 
 }
