@@ -7,24 +7,30 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import com.MyFirstApplication.dto.UserLoginDTO;
 import com.MyFirstApplication.dto.UserRegisterDTO;
+import com.MyFirstApplication.exception.EmailNotFoundException;
+import com.MyFirstApplication.exception.TokenNotFoundException;
+import com.MyFirstApplication.exception.UserException;
 import com.MyFirstApplication.model.ConfirmationToken;
+import com.MyFirstApplication.model.Note;
 import com.MyFirstApplication.model.Response;
 import com.MyFirstApplication.model.User;
 import com.MyFirstApplication.repository.ConfirmationTokenRepository;
+import com.MyFirstApplication.repository.NoteRepository;
 import com.MyFirstApplication.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
-
 	User user=new User();
 	ModelMapper modelMapper=new ModelMapper();
-
 
 	@Autowired
 	private ConfirmationTokenRepository confirmationTokenRepository;
 
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	NoteRepository noteRepository;
 
 	@Autowired
 	UserRepository userRepository;
@@ -34,11 +40,11 @@ public class UserServiceImpl implements UserService {
 	{
 		modelMapper.map(userLoginDto,user);
 		Optional<User> user=userRepository.findByUsername(userLoginDto.getUsername());
-		//if(user.get().getUsername().equals(userLoginDto.getUsername())&&user.get().getPassword().equals(user))
-		//{
-		return new Response("Login successfully",200);
-		//}
-		//return new Response("Login failed",400);
+		if(user.get().getUsername().equals(userLoginDto.getUsername())&&user.get().getPassword().equals(user))
+		{
+			return new Response("Login successfully",200);
+		}
+		throw new UserException(400,"UserName and Password doesnot matched");
 	}
 	@Transactional
 	@Override
@@ -60,16 +66,20 @@ public class UserServiceImpl implements UserService {
 			mailMessage.setFrom("ashutoshmatal33@gmail.com");
 			mailMessage.setText("To confirm your account, please click here : "
 					+"http://localhost:8080/confirm?token="+confirmationToken.getConfirmationToken());
+			try
+			{
+				emailService.sendEmail(mailMessage);
+			} 
+			catch (EmailNotFoundException e) 
+			{
 
-			emailService.sendEmail(mailMessage);
-
-			//HttpHeaders response = new HttpHeaders();
-			//response.add("emailId", user.getEmailId());
+				throw new EmailNotFoundException(400, "Error Email not recognised ");
+			}
 
 			return new Response("Registration successfully",200);
 
 		}
-		return new Response("Registration faied",400);
+		return new Response("Registration failed",400);
 
 	}
 
@@ -99,7 +109,7 @@ public class UserServiceImpl implements UserService {
 			userRepository.save(user);
 			return new Response("Successfully done",200);
 		}
-		return new Response("Failed",400);
+		throw new UserException(400, "Confirm password and password not matched");
 	}
 
 	@Override
@@ -116,6 +126,8 @@ public class UserServiceImpl implements UserService {
 			return new Response("Successfully done",200);
 
 		}
-		return new Response("Error",400);
+		throw new TokenNotFoundException(400, "Token verification Failed");
 	}
+
+
 }
