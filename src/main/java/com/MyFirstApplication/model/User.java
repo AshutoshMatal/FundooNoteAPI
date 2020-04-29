@@ -22,23 +22,24 @@ public class User
 	private int id;
 
 	private String username;
-	
+
 	private String name;
-	
+
 	private String password;
-	
+
 	private String emailId;
-	
+
 	private String country;
-	
+
 	private long mobileNo;
+
 	private boolean isValidate = false;
-	@OneToMany(mappedBy = "userEntity")
+
+	@OneToMany(mappedBy = "user")
 	private List<Note> noteList = new ArrayList<Note>();
-	
-	@OneToMany(mappedBy = "userEntity")
+
+	@OneToMany(mappedBy = "user")
 	private List<Label> labelList = new ArrayList<Label>();
-	
 
 	public User() {
 	}
@@ -53,7 +54,7 @@ public class User
 
 	}
 	//GETTERS AND SETTERS
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
@@ -118,7 +119,7 @@ public class User
 	public void setLabelList(List<Label> labelList) {
 		this.labelList = labelList;
 	}
-	
+
 	public boolean getIsValidate() {
 		return isValidate;
 	}
@@ -130,6 +131,5 @@ public class User
 	public void setValidate(boolean isValidate) {
 		this.isValidate = isValidate;
 	}
-	
-	
+
 }
