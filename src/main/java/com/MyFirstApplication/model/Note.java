@@ -1,22 +1,39 @@
 package com.MyFirstApplication.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "notes")
+@JsonIgnoreProperties({ "user", "label" })
 public class Note {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	private String title;
 	private String content;
 	private boolean isTrash;
 	private boolean isPined;
 	private boolean isArchieve;
+	@ManyToOne
+	@JoinColumn(name = "id", nullable = false)
+	private User user;
+	@ManyToMany
+	private List<Label> labelList = new ArrayList<Label>();
+	@OneToOne(mappedBy = "note")
+	private Reminder reminder;
 
 	public Note() {
 		super();
@@ -35,7 +52,7 @@ public class Note {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -57,6 +74,7 @@ public class Note {
 		return isTrash;
 	}
 
+
 	public void setTrash(boolean isTrash) {
 		this.isTrash = isTrash;
 	}
@@ -71,6 +89,29 @@ public class Note {
 	}
 	public void setArchieve(boolean isArchieve) {
 		this.isArchieve = isArchieve;
+	}
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public List<Label> getLabelList() {
+		return labelList;
+	}
+
+	public void setLabelList(List<Label> labelList) {
+		this.labelList = labelList;
+	}
+
+	public Reminder getReminder() {
+		return reminder;
+	}
+
+	public void setReminder(Reminder reminder) {
+		this.reminder = reminder;
 	}
 
 }
