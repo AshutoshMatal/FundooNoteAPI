@@ -101,17 +101,33 @@ public class ReminderServiceImpl implements ReminderService  {
 	}
 
 
-@Override
-public Response updateReminder(String token, int id, ReminderDTO reminderDto) {
-	// TODO Auto-generated method stub
-	return null;
-}
+	@Override
+	public Response updateReminder(String token, int id, ReminderDTO reminderDto) {
+		String emailId = jwtOperation.getToken(token);
+		User user = userRepository.findByEmailId(emailId);
+		if (user == null)
+			throw new LoginException(400,message.User_Not_Exist);
+		Note note = noteRepository.findById(id).orElseThrow(() -> new NoteNotFoundException(400,message.Note_Not_Exist));
+		if (!user.getNoteList().contains(note))
+			throw new NoteNotFoundException(400,message.Note_Not_Exist_User);
+	
+		if (note.getReminder() != null) {
+			Reminder reminder = note.getReminder();
+			reminder.setDateAndTime(reminderDto.getDate());
+			reminderRepository.save(reminder);
+			LOGGER.info("reminder is updated successfully and save into table");
+			return new Response(environment.getProperty("reminder.update"),
+					Integer.parseInt(environment.getProperty("status.success.code")), message.Reminder_isUpdate);
+		}
+		throw new ReminderNotPresentException(400,message.Reminder_isNotPresent);
+	}
 
-@Override
-public Response deleteReminder(String token, int id) {
-	// TODO Auto-generated method stub
-	return null;
-}
+
+	@Override
+	public Response deleteReminder(String token, int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }
