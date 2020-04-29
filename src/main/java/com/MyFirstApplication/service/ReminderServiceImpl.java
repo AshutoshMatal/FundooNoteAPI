@@ -1,5 +1,8 @@
 package com.MyFirstApplication.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -51,18 +54,18 @@ public class ReminderServiceImpl implements ReminderService  {
 
 
 	@Override
-	public Response addReminder(String token, int noteId, ReminderDTO reminderDto) {
+	public Response addReminder(String token, int id, ReminderDTO reminderDto) {
 		String emailId = jwtOperation.getToken(token);
 		User user = userRepository.findByEmailId(emailId);
 
 		if (user == null)
 			throw new LoginException(400,message.User_Not_Exist);
 
-		Note note = noteRepository.findById(noteId).orElseThrow(() -> new NoteNotFoundException(400,message.Note_Not_Exist));
+		Note note = noteRepository.findById(id).orElseThrow(() -> new NoteNotFoundException(400,message.Note_Not_Exist));
 
 		if (!user.getNoteList().contains(note))
 			throw new NoteNotFoundException(400,message.Note_Not_Exist_User);
-	
+
 		if (note.getReminder() == null) { 
 			Reminder reminder = mapper.map(reminderDto, Reminder.class);
 			reminder.setDateAndTime(reminderDto.getDate());
@@ -76,22 +79,39 @@ public class ReminderServiceImpl implements ReminderService  {
 	}
 
 	@Override
-	public Response showReminder(String token) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response showReminder(String token)
+	{
+		String emailId = jwtOperation.getToken(token);
+		User user = userRepository.findByEmailId(emailId);
+		if (user == null)
+			throw new LoginException(400,message.User_Not_Exist);
+		List<Note> userNoteList = user.getNoteList();
+		if (userNoteList == null)
+			throw new NoteNotFoundException(400,message.Note_Not_Exist);
+		List<Note> notesReminder = new ArrayList<Note>();
+		for (Note note : userNoteList) 
+		{
+			if (note.getReminder() != null)
+			{
+				notesReminder.add(note);
+			}
+		}
+		return new Response(environment.getProperty("reminder.show"),
+				Integer.parseInt(environment.getProperty("status.success.code")), notesReminder);
 	}
 
-	@Override
-	public Response updateReminder(String token, int id, ReminderDTO reminderDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Response deleteReminder(String token, int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+@Override
+public Response updateReminder(String token, int id, ReminderDTO reminderDto) {
+	// TODO Auto-generated method stub
+	return null;
+}
 
-	
+@Override
+public Response deleteReminder(String token, int id) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+
 }
