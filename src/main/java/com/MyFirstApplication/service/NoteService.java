@@ -1,12 +1,6 @@
 package com.MyFirstApplication.service;
-
-
-
 import com.MyFirstApplication.dto.NoteDTO;
 import com.MyFirstApplication.model.Response;
-
-
-
 public interface NoteService {
 Response getAllNotes(String token);
 Response createNote(String token,NoteDTO noteDto)throws Exception, NullPointerException;
