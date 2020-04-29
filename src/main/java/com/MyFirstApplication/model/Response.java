@@ -1,20 +1,21 @@
 package com.MyFirstApplication.model;
 
-public class Response 
-{ 
-	//VARIABLES
+public class Response {
 	private String ResponseStatus;
 	private int ResponseCode;
-	//CONSTRUCTOR
+	private Object data;
+
 	public Response() {
 		super();
 	}
-	public Response(String responseStatus, int responseCode) {
+
+	public Response(String responseStatus, int responseCode, Object data) {
 		super();
 		ResponseStatus = responseStatus;
 		ResponseCode = responseCode;
+		this.data = data;
 	}
-	//GETTERS AND SETTERS
+
 	public String getResponseStatus() {
 		return ResponseStatus;
 	}
@@ -26,6 +27,14 @@ public class Response
 	}
 	public void setResponseCode(int responseCode) {
 		ResponseCode = responseCode;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
 	}
 
 }
