@@ -39,7 +39,6 @@ public class ConfirmationToken {
 	public String getConfirmationToken() {
 		return confirmationToken;
 	}
-
 	public void setConfirmationToken(String confirmationToken) {
 		this.confirmationToken = confirmationToken;
 	}
