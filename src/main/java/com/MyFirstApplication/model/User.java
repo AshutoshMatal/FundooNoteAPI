@@ -1,14 +1,17 @@
 package com.MyFirstApplication.model;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 
+
+import org.springframework.stereotype.Component;
+@Component
 @Entity
 @Table(name = "UserDetails")
 public class User 
@@ -16,21 +19,26 @@ public class User
 	//VARIABLES
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
-	private long id;
-	@NotEmpty(message = "Please provide your user name")
+	private int id;
+
 	private String username;
-	@NotEmpty(message = "Please provide your name")
+	
 	private String name;
 	
 	private String password;
-	@Email(message = "Please provide a valid e-mail")
-	@NotEmpty(message = "Please provide an e-mail")
+	
 	private String emailId;
-	@NotEmpty(message = "Please provide your Country name")
+	
 	private String country;
-	@Pattern(regexp = "([0-9]{10})")
+	
 	private long mobileNo;
-	private boolean isEnabled;
+	private boolean isValidate = false;
+	@OneToMany(mappedBy = "userEntity")
+	private List<Note> noteList = new ArrayList<Note>();
+	
+	@OneToMany(mappedBy = "userEntity")
+	private List<Label> labelList = new ArrayList<Label>();
+	
 
 	public User() {
 	}
@@ -45,6 +53,12 @@ public class User
 
 	}
 	//GETTERS AND SETTERS
+	public long getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getUsername() 
 	{
 		return username;
@@ -92,12 +106,30 @@ public class User
 	public void setMobileNo(long mobileNo) {
 		this.mobileNo = mobileNo;
 	}
-	public boolean isEnabled() {
-		return isEnabled;
+	public List<Note> getNoteList() {
+		return noteList;
+	}
+	public void setNoteList(List<Note> noteList) {
+		this.noteList = noteList;
+	}
+	public List<Label> getLabelList() {
+		return labelList;
+	}
+	public void setLabelList(List<Label> labelList) {
+		this.labelList = labelList;
+	}
+	
+	public boolean getIsValidate() {
+		return isValidate;
 	}
 
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setIsValidate(boolean isValidate) {
+		this.isValidate = isValidate;
 	}
+
+	public void setValidate(boolean isValidate) {
+		this.isValidate = isValidate;
+	}
+	
 	
 }
