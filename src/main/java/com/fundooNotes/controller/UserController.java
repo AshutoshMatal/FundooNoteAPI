@@ -27,7 +27,7 @@ public class UserController{
 	UserServiceImpl userService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<Response> register( @RequestBody UserRegisterDTO userRegisterDto)throws Exception,NullPointerException{
+	public ResponseEntity<Response> register(@RequestBody UserRegisterDTO userRegisterDto)throws Exception,NullPointerException{
 		Response response=userService.register(userRegisterDto);
 		return new ResponseEntity<Response>(response, HttpStatus.OK); 
 	}
@@ -39,17 +39,17 @@ public class UserController{
 	}
 	
 	@PostMapping("/forget")
-	public ResponseEntity<Response> forget( @RequestBody ForgetPasswordDTO forgetPasswordDto){
+	public ResponseEntity<Response> forget(@RequestBody ForgetPasswordDTO forgetPasswordDto){
 		Response response=userService.forget(forgetPasswordDto);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	@PutMapping("/reset/{token}")
-	public ResponseEntity<Response> reset( @PathVariable String token, @RequestBody ResetPasswordDTO resetPasswordDto){
+	public ResponseEntity<Response> reset(@PathVariable String token, @RequestBody ResetPasswordDTO resetPasswordDto){
 		Response response=userService.reset(token, resetPasswordDto);
 		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	 @GetMapping("/validateUser/{token}")
-	public ResponseEntity<String> validateUser( @PathVariable String token)
+	public ResponseEntity<String> validateUser(@PathVariable String token)
 	{
 		Response response=userService.validateUser(token);
 		return new ResponseEntity<String>(response.getMessage(), HttpStatus.OK);
