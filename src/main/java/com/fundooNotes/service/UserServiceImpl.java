@@ -27,7 +27,7 @@ import com.sun.istack.logging.Logger;
 @Service
 @PropertySource("classpath:message.properties")
 public class UserServiceImpl implements UserService {
-	
+
 	@Autowired
 	private EmailServiceImpl emailService;
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private MessageResponse messageResponse;
-	
+
 	SimpleMailMessage emailId;
 
 	@Autowired
@@ -52,13 +52,13 @@ public class UserServiceImpl implements UserService {
 
 	private static final Logger LOGGER = Logger.getLogger(NoteServiceImpl.class);
 
-	
+
 	@Override
 	public Response login(UserLoginDTO userLoginDto) 
 	{
 		User user = userRepository.findByEmailId(userLoginDto.getEmailId());
 		String token = jwtObject.generateToken(userLoginDto.getEmailId());
-		
+
 		// USER PRESENT OR NOT
 		if (user == null)
 			throw new LoginException(message.User_Not_Exist);
@@ -106,7 +106,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response forget(ForgetPasswordDTO forgetPasswordDto)
 	{
-
 		User userData = userRepository.findByEmailId(forgetPasswordDto.getEmailId());
 		// CHECK USER PRESENT OR NOT
 		if (userData == null)
